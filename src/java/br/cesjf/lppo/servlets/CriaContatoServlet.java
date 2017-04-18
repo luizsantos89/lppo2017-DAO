@@ -1,6 +1,8 @@
 
 package br.cesjf.lppo.servlets;
 
+import br.cesjf.lppo.Contato;
+import br.cesjf.lppo.dao.ContatoDAO;
 import java.io.IOException;
 import java.io.PrintWriter;
 import javax.servlet.ServletException;
@@ -28,7 +30,21 @@ public class CriaContatoServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+        Contato novoContato = new Contato();
+        novoContato.setNome(request.getParameter("nome"));
+        novoContato.setSobrenome(request.getParameter("sobrenome"));
+        novoContato.setTelefone(request.getParameter("telefone"));
         
+        ContatoDAO dao = new ContatoDAO();
+        try{
+        dao.cria(novoContato);
+        } catch(Exception ex){
+            System.err.println(ex);
+            request.setAttribute("mensagem", ex);
+            request.getRequestDispatcher("WEB-INF/novo-contato.jsp").forward(request, response);
+            return;
+        }
+        response.sendRedirect("contatos.html");
     }
 
  
